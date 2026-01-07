@@ -1,0 +1,41 @@
+﻿# LoRA 微调配置文件
+
+lora:
+  r: 16                    # LoRA 秩（rank），控制参数量，越大效果越好但是可能越慢
+  lora_alpha: 32           # LoRA alpha 参数，通常是 r 的2倍
+  target_modules:          # 要应用 LoRA 的模块
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  lora_dropout: 0.05       # Dropout 比例，训练时随机丢掉的神经元比例，防止过拟合，但是数值过大会导致欠拟合
+  bias: "none"             # bias 设置
+  task_type: "CAUSAL_LM"   # 任务类型（因果语言模型）
+
+training:
+  output_dir: "./data/checkpoints"
+  num_train_epochs: 3 #训练轮数
+  per_device_train_batch_size: 4 #每个设备上的训练批量大小，影响显存占用和稳定性
+  per_device_eval_batch_size: 4 #评估批次大小
+  gradient_accumulation_steps: 4 #在显存有限的情况下实现大批次训练
+  learning_rate: 2.0e-4 #学习率，太大训练不稳定，太小训练很慢
+  warmup_steps: 100 #前100步将学习率从0逐渐增加到目标值，避免初始阶段学习率过大导致训练不稳
+  logging_steps: 10 #每10步记录一次训练日志，方便监控训练进度
+  save_steps: 500 #每500步保存一次模型 checkpoint，防止训练过程中发生意外导致模型丢失
+  eval_steps: 500 #每500步评估一次模型在验证集上的性能，及时发现过拟合
+  fp16: true #使用混合精度训练，减少显存占用，提高训练速度
+  optim: "paged_adamw_32bit" #使用分页的 AdamW 优化器，支持大模型训练
+  weight_decay: 0.01 #权重衰减，防止过拟合
+  lr_scheduler_type: "cosine" #学习率调度器类型，这里使用余弦调度器
+  eval_strategy: "steps" #评估策略，这里选择每500步评估一次
+  save_strategy: "steps" #保存策略，这里选择每500步保存一次
+  load_best_model_at_end: true #训练结束后加载最佳模型，默认是最后一个 checkpoint
+  report_to: ["tensorboard"] 
+  max_seq_length: 512 #最大序列长度，超过这个长度的序列会被截断
+  
+  # 内存优化
+  gradient_checkpointing: true #梯度检查点，大幅减少显存占用，但是训练速度会变慢
+  max_grad_norm: 0.3 #稳定训练

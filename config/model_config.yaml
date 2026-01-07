@@ -1,0 +1,23 @@
+﻿# 模型配置文件
+
+model:
+  name: "./models/Qwen3-1.7B"
+  quantization:
+    enabled: true
+    load_in_4bit: true
+    bnb_4bit_compute_dtype: "float16"
+    bnb_4bit_use_double_quant: true
+    bnb_4bit_quant_type: "nf4"
+  
+  device_map: "auto"
+  trust_remote_code: true
+  low_cpu_mem_usage: true
+  cache_dir: null
+
+inference:
+  max_new_tokens: 512
+  temperature: 0.8
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.1
+  do_sample: true

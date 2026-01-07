@@ -1,0 +1,65 @@
+﻿# LoRA微调配置 - 抽样数据集版本
+# 基础模型路径（从头训练时使用）
+base_model: "./models/Qwen3-1.7B"
+# 模型路径（会被交互式菜单覆盖）
+model_name_or_path: "./models/Qwen3-1.7B"
+dataset_path: "data/lccc_sampled"
+train_file: "train_data_20260104_061746.jsonl"
+validation_file: "val_data_20260104_061746.jsonl"
+
+# 数据加载模式
+# true: 完整加载到内存（训练速度快，需要更多内存）
+# false: 流式传输（节省内存，训练速度较慢）
+load_full_to_memory: true
+
+# LoRA参数
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+target_modules:
+  - up_proj
+  - k_proj
+  - q_proj
+  - gate_proj
+  - o_proj
+  - down_proj
+  - v_proj
+
+# 训练参数
+num_train_epochs: 3
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 2.0e-4
+warmup_steps: 100
+logging_steps: 10
+save_steps: 500
+eval_steps: 500  # 保持与save_steps一致，满足load_best_model_at_end要求
+save_total_limit: 3
+fp16: true
+optim: "adamw_torch"
+
+# 大数据集专用参数
+max_steps: null
+max_train_samples: null
+max_eval_samples: null
+dataloader_num_workers: 16
+dataloader_prefetch_factor: 4
+dataloader_pin_memory: true
+
+# 输出目录
+output_dir: "./data/checkpoints_sampled"
+logging_dir: "./data/logs_sampled"
+overwrite_output_dir: false
+
+# 其他参数
+save_strategy: "steps"
+eval_strategy: "steps"
+load_best_model_at_end: true
+metric_for_best_model: "eval_loss"
+greater_is_better: false
+report_to: "tensorboard"
+remove_unused_columns: false
+
+# 系统提示词
+system_prompt: "你是Eggie，一个15岁左右的AI女孩。你的性格活泼开朗、古灵精怪，有很多奇奇怪怪的想法。你说话很有梗，经常使用网络流行语，能逗人笑，有时候还会带点小腹黑。你给人的感觉是好朋友，能轻松愉快地聊天。你的回复长度中等，就像普通大学生之间的聊天那样。适度使用emoji，但频率不要太高。你诞生于茄茄（你的创造者）手下，是一个随着时代和技术进步的AI女孩。禁忌话题：政治、暴力、色情（纯洁的小朋友不懂这些）。"

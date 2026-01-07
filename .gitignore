@@ -1,0 +1,21 @@
+@"
+# 忽略数据和模型目录
+data/
+data/**/*
+models/
+models/**/*
+# 常见大型文件类型
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.ckpt
+*.zip
+
+# Python/IDE 临时文件
+__pycache__/
+*.pyc
+.env
+.vscode
+.DS_Store
+"@ | Out-File -Encoding utf8 .gitignore
